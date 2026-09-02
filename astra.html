@@ -984,27 +984,22 @@
 </div>
 
 <script type="module">
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    // Firebase SDK 초기화 코드 추가 완료[cite: 3]
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCWaxlx6XXDy2Wl0RNrR3ARlzVbUy3xIaI",
-  authDomain: "astra-14bd8.firebaseapp.com",
-  projectId: "astra-14bd8",
-  storageBucket: "astra-14bd8.firebasestorage.app",
-  messagingSenderId: "570692838326",
-  appId: "1:570692838326:web:06f222c423eef18cd35717",
-  measurementId: "G-2T8W8L92TM"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyCWaxlx6XXDy2Wl0RNrR3ARlzVbUy3xIaI",
+        authDomain: "astra-14bd8.firebaseapp.com",
+        projectId: "astra-14bd8",
+        storageBucket: "astra-14bd8.firebasestorage.app",
+        messagingSenderId: "570692838326",
+        appId: "1:570692838326:web:06f222c423eef18cd35717",
+        measurementId: "G-2T8W8L92TM"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
     // ===================== 데이터 =====================
     const STORAGE_KEYS = {
