@@ -367,44 +367,6 @@
     }
     .scroll-cue:hover { background: rgba(212,175,122,0.1); transform: translateY(-2px); }
 
-    /* ===== ASTRA 로고 (참고 이미지 스타일) ===== */
-    .logo-mark {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-width: 148px;
-        line-height: 1;
-        color: var(--star-white);
-    }
-
-    .logo-star {
-        font-family: Georgia, serif;
-        font-size: 1.15rem;
-        line-height: 1;
-        margin-bottom: 5px;
-        color: var(--star-white);
-    }
-
-    .logo-word {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.72rem;
-        font-weight: 600;
-        letter-spacing: 0.16em;
-        padding-left: 0.16em;
-    }
-
-    .logo-subword {
-        margin-top: 7px;
-        font-family: 'Noto Sans KR', sans-serif;
-        font-size: 0.46rem;
-        font-weight: 500;
-        letter-spacing: 0.46em;
-        padding-left: 0.46em;
-        color: var(--text-muted);
-        white-space: nowrap;
-    }
-
     /* ===== 대표 ===== */
     .representative-section {
         max-width: 1180px;
@@ -664,43 +626,6 @@
     }
     .news-item.open .news-body { max-height: 220px; margin-top: 14px; }
     .news-toggle-cue { font-size: 0.72rem; color: var(--text-dim); margin-top: 10px; }
-
-    /* ===== ABOUT ===== */
-    .about-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 70px;
-        align-items: start;
-    }
-    .about-text p { color: var(--text-muted); margin-bottom: 18px; font-size: 0.97rem; }
-    .about-text .quote {
-        font-family: 'Playfair Display', serif;
-        font-style: italic;
-        font-size: 1.3rem;
-        color: var(--gold-soft);
-        border-left: 2px solid var(--gold);
-        padding-left: 20px;
-        margin: 30px 0;
-    }
-    .stat-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
-    }
-    .stat-card {
-        border: 1px solid var(--line);
-        padding: 26px 22px;
-        border-radius: 4px;
-        background: var(--bg-panel);
-    }
-    .stat-num {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.1rem;
-        color: var(--gold-soft);
-        display: block;
-        margin-bottom: 6px;
-    }
-    .stat-label { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.04em; }
 
     /* ===== 관리자 전용 컨트롤 ===== */
     .admin-only { display: none; }
@@ -1058,7 +983,24 @@
     <div class="modal" id="formModalBody"></div>
 </div>
 
-<script>
+<script type="module">
+    // Firebase SDK 초기화 코드 추가 완료[cite: 3]
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCWaxlx6XXDy2Wl0RNrR3ARlzVbUy3xIaI",
+        authDomain: "astra-14bd8.firebaseapp.com",
+        projectId: "astra-14bd8",
+        storageBucket: "astra-14bd8.firebasestorage.app",
+        messagingSenderId: "570692838326",
+        appId: "1:570692838326:web:06f222c423eef18cd35717",
+        measurementId: "G-2T8W8L92TM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
     // ===================== 데이터 =====================
     const STORAGE_KEYS = {
         artists: 'astra_artists_v1',
@@ -1203,7 +1145,7 @@
                 <div class="news-top" onclick="toggleNews(${n.id})" style="cursor:pointer;">
                     <div>
                         <span class="news-date">${formatDate(n.date)}</span>
-                        <h4 style="display:inline;">　${n.title}${n.id === newest ? '<span class="news-badge-new">NEW</span>' : ''}</h4>
+                        <h4 style="display:inline;"> ${n.title}${n.id === newest ? '<span class="news-badge-new">NEW</span>' : ''}</h4>
                     </div>
                     <div class="item-admin-controls" onclick="event.stopPropagation();">
                         <button class="icon-btn" onclick="openNewsModal(${n.id})" title="수정">✎</button>
@@ -1216,27 +1158,28 @@
         `).join('');
     }
 
-    function toggleNews(id) {
+    window.toggleNews = function(id) {
         const el = document.getElementById('news-' + id);
         if (el) el.classList.toggle('open');
-    }
+    };
 
     function renderAll() { renderArtists(); renderSchedule(); renderNews(); }
 
-    function deleteItem(type, id) {
+    window.deleteItem = function(type, id) {
         if (!confirm('정말 삭제하시겠습니까?')) return;
         if (type === 'artists') { artists = artists.filter(i => i.id !== id); saveData(STORAGE_KEYS.artists, artists); renderArtists(); }
         if (type === 'schedule') { schedule = schedule.filter(i => i.id !== id); saveData(STORAGE_KEYS.schedule, schedule); renderSchedule(); }
         if (type === 'news') { news = news.filter(i => i.id !== id); saveData(STORAGE_KEYS.news, news); renderNews(); }
-    }
+    };
 
     // ===================== 공용 폼 모달 =====================
     const formModal = document.getElementById('formModal');
     const formModalBody = document.getElementById('formModalBody');
 
     function closeFormModal() { formModal.classList.remove('open'); }
+    window.closeFormModal = closeFormModal;
 
-    function openArtistModal(id) {
+    window.openArtistModal = function(id) {
         const item = artists.find(a => a.id === id) || { name: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0] };
         formModalBody.innerHTML = `
             <h3>${id ? '아티스트 수정' : '아티스트 추가'}</h3>
@@ -1256,14 +1199,14 @@
             </div>
         `;
         formModal.classList.add('open');
-    }
+    };
 
-    function selectColor(el) {
+    window.selectColor = function(el) {
         el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
         el.classList.add('selected');
-    }
+    };
 
-    function submitArtist(id) {
+    window.submitArtist = function(id) {
         const name = document.getElementById('f-name').value.trim();
         const group = document.getElementById('f-group').value.trim();
         const role = document.getElementById('f-role').value.trim();
@@ -1280,9 +1223,9 @@
         saveData(STORAGE_KEYS.artists, artists);
         renderArtists();
         closeFormModal();
-    }
+    };
 
-    function openScheduleModal(id) {
+    window.openScheduleModal = function(id) {
         const item = schedule.find(s => s.id === id) || { date: '', title: '', artist: '', type: '쇼케이스' };
         formModalBody.innerHTML = `
             <h3>${id ? '일정 수정' : '일정 추가'}</h3>
@@ -1301,9 +1244,9 @@
             </div>
         `;
         formModal.classList.add('open');
-    }
+    };
 
-    function submitSchedule(id) {
+    window.submitSchedule = function(id) {
         const date = document.getElementById('f-date').value;
         const title = document.getElementById('f-title').value.trim();
         const artist = document.getElementById('f-artist').value.trim();
@@ -1318,9 +1261,9 @@
         saveData(STORAGE_KEYS.schedule, schedule);
         renderSchedule();
         closeFormModal();
-    }
+    };
 
-    function openNewsModal(id) {
+    window.openNewsModal = function(id) {
         const item = news.find(n => n.id === id) || { date: '', title: '', content: '' };
         formModalBody.innerHTML = `
             <h3>${id ? '소식 수정' : '소식 추가'}</h3>
@@ -1334,9 +1277,9 @@
             </div>
         `;
         formModal.classList.add('open');
-    }
+    };
 
-    function submitNews(id) {
+    window.submitNews = function(id) {
         const date = document.getElementById('f-date').value;
         const title = document.getElementById('f-title').value.trim();
         const content = document.getElementById('f-content').value.trim();
@@ -1350,7 +1293,7 @@
         saveData(STORAGE_KEYS.news, news);
         renderNews();
         closeFormModal();
-    }
+    };
 
     document.getElementById('addArtistBtn').addEventListener('click', () => openArtistModal(null));
     document.getElementById('addScheduleBtn').addEventListener('click', () => openScheduleModal(null));
