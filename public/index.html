@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTRA ENTERTAINMENT | MAKE YOUR MOMENT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #05060d;
+        --bg-panel: #0a0d1c;
+        --bg-panel-alt: #0d1128;
+        --gold: #d4af7a;
+        --gold-soft: #ecd9b3;
+        --lavender: #9b90d6;
+        --star-white: #f5f3ec;
+        --text-muted: #8890ad;
+        --text-dim: #5c6284;
+        --line: rgba(245,243,236,0.09);
+        --shadow-deep: 0 20px 60px rgba(0,0,0,0.55);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        background: var(--bg-deep);
+        color: var(--star-white);
+        font-family: 'Noto Sans KR', sans-serif;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+    ul { list-style: none; }
+
+    ::selection { background: var(--gold); color: #17140a; }
+
+    /* ===== 배경 별빛 ===== */
+    .starfield {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(ellipse at 20% 20%, rgba(155,144,214,0.10) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 70%, rgba(212,175,122,0.08) 0%, transparent 55%),
+            var(--bg-deep);
+    }
+    .star-dot {
+        position: absolute;
+        background: var(--star-white);
+        border-radius: 50%;
+        animation: twinkle 4s ease-in-out infinite;
+    }
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.15; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.35); }
+    }
+
+    /* ===== 공용 섹션 레이아웃 ===== */
+    .section {
+        position: relative;
+        z-index: 1;
+        padding: 130px 8vw 110px;
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+    .section.alt { background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.015) 15%, rgba(255,255,255,0.015) 85%, transparent 100%); }
+
+    .eyebrow {
+        font-size: 0.78rem;
+        letter-spacing: 0.32em;
+        color: var(--gold);
+        font-weight: 500;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+    }
+
+    .section h2 {
+        font-family: 'Playfair Display', 'Noto Serif KR', serif;
+        font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-bottom: 16px;
+    }
+
+    .section-desc {
+        color: var(--text-muted);
+        max-width: 560px;
+        font-size: 0.98rem;
+        margin-bottom: 56px;
+    }
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+
+    /* ===== 내비게이션 ===== */
+    .nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        padding: 26px 6vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: padding 0.35s ease, background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease;
+        border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+        padding: 15px 6vw;
+        background: rgba(5,6,13,0.78);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+    .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: var(--star-white);
+    }
+    .logo span { color: var(--gold); }
+
+    /* ===== ASTRA 로고 ===== */
+    .logo-mark {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 132px;
+        color: var(--star-white);
+        line-height: 1;
+    }
+    .logo-star {
+        font-size: 0.72rem;
+        color: var(--star-white);
+        margin-bottom: 2px;
+        transform: translateY(1px);
+    }
+    .logo-word {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.45rem;
+        font-weight: 500;
+        letter-spacing: 0.28em;
+        padding-left: 0.28em;
+    }
+    .logo-subword {
+        position: relative;
+        margin-top: 7px;
+        padding: 0 20px;
+        font-size: 0.47rem;
+        letter-spacing: 0.42em;
+        color: var(--gold-soft);
+        white-space: nowrap;
+    }
+    .logo-subword::before,
+    .logo-subword::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 16px;
+        height: 1px;
+        background: rgba(212,175,122,0.7);
+    }
+    .logo-subword::before { left: 0; }
+    .logo-subword::after { right: 0; }
+
+    .nav-links {
+        display: flex;
+        gap: 42px;
+    }
+    .nav-links a {
+        font-size: 0.82rem;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+        font-weight: 500;
+        position: relative;
+        padding-bottom: 4px;
+        transition: color 0.25s ease;
+    }
+    .nav-links a::after {
+        content: '';
+        position: absolute;
+        left: 0; bottom: 0;
+        width: 0; height: 1px;
+        background: var(--gold);
+        transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--star-white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: none;
+        border: none;
+        padding: 6px;
+        z-index: 110;
+    }
+    .hamburger span {
+        width: 24px; height: 1.5px;
+        background: var(--star-white);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+        position: fixed;
+        inset: 0;
+        background: rgba(5,6,13,0.98);
+        z-index: 99;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 36px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: auto; }
+    .mobile-menu a {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.7rem;
+        letter-spacing: 0.08em;
+        color: var(--star-white);
+    }
+
+    /* ===== 히어로 ===== */
+    .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 6vw;
+        z-index: 1;
+    }
+    .hero-constellation {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -55%);
+        width: min(720px, 92vw);
+        opacity: 0.9;
+        z-index: 0;
+        transition: transform 0.4s ease-out;
+    }
+    .hero-constellation circle.star-point { animation: pulse-star 3.4s ease-in-out infinite; }
+    @keyframes pulse-star {
+        0%, 100% { opacity: 0.45; r: var(--base-r, 3); }
+        50% { opacity: 1; }
+    }
+    .hero-constellation line {
+        stroke: rgba(212,175,122,0.28);
+        stroke-width: 1;
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero .eyebrow { justify-content: center; display: block; }
+
+    .hero-logo-mark {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1;
+        margin-bottom: 30px;
+    }
+    .hero-logo-star {
+        font-size: 2.2rem;
+        color: var(--star-white);
+        margin-bottom: 4px;
+    }
+    .hero-logo-word {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(4rem, 10vw, 7rem);
+        font-weight: 500;
+        letter-spacing: 0.28em;
+        padding-left: 0.28em;
+        color: var(--star-white);
+        line-height: 0.9;
+    }
+    .hero-logo-subword {
+        position: relative;
+        margin-top: 20px;
+        padding: 0 42px;
+        font-size: clamp(0.52rem, 1vw, 0.72rem);
+        letter-spacing: 0.55em;
+        color: var(--gold-soft);
+        white-space: nowrap;
+    }
+    .hero-logo-subword::before,
+    .hero-logo-subword::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 32px;
+        height: 1px;
+        background: rgba(212,175,122,0.65);
+    }
+    .hero-logo-subword::before { left: 0; }
+    .hero-logo-subword::after { right: 0; }
+
+    .hero-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        line-height: 1.12;
+        letter-spacing: 0.01em;
+        background: linear-gradient(135deg, #ffffff 0%, var(--gold-soft) 55%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 24px;
+        letter-spacing: 0.08em;
+    }
+
+    .hero-sub {
+        color: var(--text-muted);
+        font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+        max-width: 480px;
+        margin: 0 auto 46px;
+    }
+
+    .scroll-cue {
+        display: inline-block;
+        font-size: 0.78rem;
+        letter-spacing: 0.2em;
+        color: var(--gold-soft);
+        border: 1px solid rgba(212,175,122,0.4);
+        padding: 13px 30px;
+        border-radius: 999px;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .scroll-cue:hover { background: rgba(212,175,122,0.1); transform: translateY(-2px); }
+
+    /* ===== ASTRA 로고 (참고 이미지 스타일) ===== */
+    .logo-mark {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 148px;
+        line-height: 1;
+        color: var(--star-white);
+    }
+
+    .logo-star {
+        font-family: Georgia, serif;
+        font-size: 1.15rem;
+        line-height: 1;
+        margin-bottom: 5px;
+        color: var(--star-white);
+    }
+
+    .logo-word {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.72rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        padding-left: 0.16em;
+    }
+
+    .logo-subword {
+        margin-top: 7px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 0.46rem;
+        font-weight: 500;
+        letter-spacing: 0.46em;
+        padding-left: 0.46em;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    /* ===== 대표 ===== */
+    .representative-section {
+        max-width: 1180px;
+    }
+
+    .representative-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(260px, 0.75fr) minmax(280px, 1fr);
+        gap: 38px 56px;
+        padding: 42px;
+        background:
+            radial-gradient(circle at 12% 15%, rgba(212,175,122,0.08), transparent 28%),
+            var(--bg-panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: var(--shadow-deep);
+    }
+
+    .representative-card::before {
+        content: '✦';
+        position: absolute;
+        right: 34px;
+        top: 22px;
+        font-size: 4rem;
+        font-family: Georgia, serif;
+        color: rgba(212,175,122,0.08);
+    }
+
+    .representative-intro {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .representative-avatar {
+        flex: 0 0 92px;
+        width: 92px;
+        height: 92px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid rgba(212,175,122,0.55);
+        background: radial-gradient(circle, rgba(212,175,122,0.22), rgba(212,175,122,0.04));
+        color: var(--gold-soft);
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        box-shadow: 0 0 35px rgba(212,175,122,0.08);
+    }
+
+    .representative-label,
+    .career-heading {
+        display: block;
+        color: var(--gold);
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .representative-intro h3 {
+        font-family: 'Noto Serif KR', serif;
+        font-size: 2rem;
+        margin-bottom: 3px;
+    }
+
+    .representative-title {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+    }
+
+    .representative-info {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .rep-info-item {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.018);
+    }
+
+    .rep-info-item span {
+        flex: 0 0 44px;
+        color: var(--gold);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+    }
+
+    .rep-info-item strong {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--star-white);
+    }
+
+    .career {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--line);
+        padding-top: 30px;
+    }
+
+    .career ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px 28px;
+        color: var(--text-muted);
+        font-size: 0.86rem;
+    }
+
+    .career li {
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(245,243,236,0.05);
+    }
+
+    .career b {
+        color: var(--gold-soft);
+        font-weight: 500;
+        margin-right: 5px;
+    }
+
+    /* ===== 아티스트 ===== */
+    .artist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 26px;
+    }
+    .artist-card {
+        background: var(--bg-panel);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 30px 26px;
+        position: relative;
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .artist-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(212,175,122,0.45);
+        box-shadow: var(--shadow-deep);
+    }
+    .artist-avatar {
+        width: 110px; height: 110px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.7rem;
+        font-weight: 600;
+        color: #0c0e1a;
+        margin-bottom: 22px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid rgba(212,175,122,0.22);
+    }
+    .artist-avatar.has-image { color: transparent; }
+    .artist-avatar img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .image-upload-box {
+        border: 1px dashed rgba(212,175,122,0.35);
+        background: rgba(255,255,255,0.025);
+        padding: 14px; border-radius: 4px;
+    }
+    .image-preview {
+        width: 110px; height: 110px; border-radius: 50%;
+        overflow: hidden; margin-bottom: 12px;
+        border: 1px solid var(--line);
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04);
+        color: var(--text-dim); font-size: 0.75rem; text-align: center;
+    }
+    .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .image-upload-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .file-label {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 9px 13px; border: 1px solid var(--line); border-radius: 4px;
+        color: var(--text-muted); font-size: 0.8rem; cursor: pointer;
+        transition: border-color .2s ease, color .2s ease;
+    }
+    .file-label:hover { border-color: var(--gold); color: var(--gold-soft); }
+    .file-input { display: none; }
+    .image-note { margin-top: 8px; color: var(--text-dim); font-size: 0.72rem; line-height: 1.45; }
+    .artist-group-tag {
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+    .artist-card h3 {
+        font-family: 'Noto Serif KR', serif;
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+    }
+    .artist-role {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+    }
+    .artist-bio {
+        font-size: 0.86rem;
+        color: var(--text-dim);
+        line-height: 1.55;
+    }
+
+    /* ===== 스케줄 (타임라인) ===== */
+    .schedule-list {
+        position: relative;
+        padding-left: 28px;
+        border-left: 1px solid var(--line);
+    }
+    .schedule-item {
+        position: relative;
+        padding: 0 0 40px 30px;
+    }
+    .schedule-item::before {
+        content: '';
+        position: absolute;
+        left: -35px; top: 3px;
+        width: 9px; height: 9px;
+        border-radius: 50%;
+        background: var(--gold);
+        box-shadow: 0 0 0 4px rgba(212,175,122,0.15);
+    }
+    .schedule-date {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        color: var(--gold-soft);
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+    }
+    .schedule-type {
+        display: inline-block;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        color: var(--lavender);
+        border: 1px solid rgba(155,144,214,0.35);
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+    }
+    .schedule-item h4 {
+        font-size: 1.05rem;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    .schedule-artist { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ===== 뉴스 ===== */
+    .news-list { display: flex; flex-direction: column; gap: 1px; background: var(--line); }
+    .news-item {
+        background: var(--bg-deep);
+        padding: 28px 8px;
+        cursor: pointer;
+        transition: background 0.25s ease;
+    }
+    .news-item:hover { background: rgba(255,255,255,0.02); }
+    .news-top { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+    .news-date { font-size: 0.78rem; color: var(--text-dim); white-space: nowrap; letter-spacing: 0.04em; }
+    .news-item h4 {
+        font-size: 1.08rem;
+        font-weight: 500;
+        flex: 1;
+    }
+    .news-badge-new {
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        background: var(--gold);
+        color: #17140a;
+        padding: 2px 8px;
+        border-radius: 999px;
+        margin-left: 10px;
+        vertical-align: middle;
+        font-weight: 700;
+    }
+    .news-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, margin-top 0.4s ease;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    .news-item.open .news-body { max-height: 220px; margin-top: 14px; }
+    .news-toggle-cue { font-size: 0.72rem; color: var(--text-dim); margin-top: 10px; }
+
+    /* ===== ABOUT ===== */
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 70px;
+        align-items: start;
+    }
+    .about-text p { color: var(--text-muted); margin-bottom: 18px; font-size: 0.97rem; }
+    .about-text .quote {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 1.3rem;
+        color: var(--gold-soft);
+        border-left: 2px solid var(--gold);
+        padding-left: 20px;
+        margin: 30px 0;
+    }
+    .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+    }
+    .stat-card {
+        border: 1px solid var(--line);
+        padding: 26px 22px;
+        border-radius: 4px;
+        background: var(--bg-panel);
+    }
+    .stat-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.1rem;
+        color: var(--gold-soft);
+        display: block;
+        margin-bottom: 6px;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.04em; }
+
+    /* ===== 관리자 전용 컨트롤 ===== */
+    .admin-only { display: none; }
+    body.is-admin .admin-only { display: inline-flex; }
+
+    .item-admin-controls {
+        display: none;
+        gap: 8px;
+        position: absolute;
+        top: 18px; right: 18px;
+    }
+    body.is-admin .item-admin-controls { display: flex; }
+    .icon-btn {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        color: var(--text-muted);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem;
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .icon-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .icon-btn.danger:hover { color: #f87171; border-color: #f87171; }
+    .photo-btn { cursor: pointer; }
+
+    .schedule-item .item-admin-controls, .news-top .item-admin-controls { position: static; margin-left: auto; }
+    .news-top { position: relative; }
+
+    .add-btn {
+        margin-top: 34px;
+        background: none;
+        border: 1px dashed rgba(212,175,122,0.4);
+        color: var(--gold-soft);
+        padding: 13px 26px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        transition: background 0.25s ease, border-color 0.25s ease;
+    }
+    .add-btn:hover { background: rgba(212,175,122,0.08); border-color: var(--gold); }
+
+    .admin-banner {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 90;
+        background: rgba(212,175,122,0.95);
+        color: #17140a;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.03em;
+    }
+    body.is-admin .admin-banner { display: flex; }
+    .admin-banner button {
+        background: #17140a;
+        color: var(--gold-soft);
+        border: none;
+        padding: 7px 16px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+    }
+
+    /* ===== 모달 ===== */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(3,4,9,0.72);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+        background: var(--bg-panel-alt);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 34px 32px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: var(--shadow-deep);
+        max-height: 88vh;
+        overflow-y: auto;
+    }
+    .modal h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        margin-bottom: 22px;
+        color: var(--gold-soft);
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+        display: block;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        margin-bottom: 7px;
+    }
+    .field input, .field textarea, .field select {
+        width: 100%;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        color: var(--star-white);
+        padding: 11px 13px;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 0.9rem;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus,
+    a:focus-visible, button:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+    }
+    .field textarea { resize: vertical; min-height: 70px; }
+    .color-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .color-dot {
+        width: 28px; height: 28px; border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+    }
+    .color-dot.selected { border-color: var(--star-white); }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 24px;
+    }
+    .btn {
+        padding: 10px 22px;
+        border-radius: 4px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+    .btn.primary { background: var(--gold); color: #17140a; border-color: var(--gold); font-weight: 600; }
+    .btn:hover { border-color: var(--gold); color: var(--star-white); }
+    .btn.primary:hover { opacity: 0.9; color: #17140a; }
+
+    .modal-error {
+        color: #f87171;
+        font-size: 0.8rem;
+        margin-top: 12px;
+        min-height: 1em;
+    }
+
+    /* ===== 푸터 ===== */
+    .site-footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 60px 6vw 90px;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+        border-top: 1px solid var(--line);
+    }
+    .site-footer .logo { display: block; margin-bottom: 18px; font-size: 1.1rem; }
+    .admin-link {
+        background: none; border: none;
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        letter-spacing: 0.06em;
+        margin-top: 14px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    .admin-link:hover { color: var(--gold-soft); }
+
+    /* ===== 반응형 ===== */
+    @media (max-width: 860px) {
+        .nav-links { display: none; }
+        .hamburger { display: flex; }
+        .about-grid { grid-template-columns: 1fr; gap: 40px; }
+        .representative-card { grid-template-columns: 1fr; padding: 30px; }
+        .career { grid-column: auto; }
+        .career ul { grid-template-columns: 1fr; }
+        .section { padding: 100px 7vw 80px; }
+    }
+    @media (max-width: 520px) {
+        .logo-word { font-size: 1.15rem; }
+        .logo-subword { font-size: 0.4rem; letter-spacing: 0.32em; }
+        .hero-logo-word { font-size: clamp(3rem, 16vw, 5rem); }
+        .hero-logo-subword { padding: 0 28px; letter-spacing: 0.4em; }
+        .hero-logo-subword::before, .hero-logo-subword::after { width: 22px; }
+        .logo-mark { min-width: 120px; }
+        .logo-word { font-size: 1.42rem; }
+        .logo-subword { font-size: 0.38rem; letter-spacing: 0.38em; padding-left: 0.38em; }
+        .stat-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+        .artist-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+        .artist-card { padding: 22px 18px; }
+        .representative-card { padding: 24px 20px; }
+        .representative-intro { gap: 16px; }
+        .representative-avatar { flex-basis: 70px; width: 70px; height: 70px; font-size: 1.5rem; }
+        .representative-intro h3 { font-size: 1.65rem; }
+        .rep-info-item { flex-direction: column; gap: 5px; }
+        .news-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="starfield" id="starfield"></div>
+
+<header class="nav" id="nav">
+    <div class="nav-inner">
+        <a class="logo-mark" href="#home" aria-label="ASTRA ENTERTAINMENT">
+            <span class="logo-star">✦</span>
+            <span class="logo-word">ASTRA</span>
+            <span class="logo-subword">ENTERTAINMENT</span>
+        </a>
+        <nav class="nav-links">
+            <a href="#home">HOME</a>
+            <a href="#artists">ARTISTS</a>
+            <a href="#representative">REPRESENTATIVE</a>
+            <a href="#schedule">SCHEDULE</a>
+            <a href="#news">NEWS</a>
+        </nav>
+        <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#home">HOME</a>
+    <a href="#artists">ARTISTS</a>
+    <a href="#representative">REPRESENTATIVE</a>
+    <a href="#schedule">SCHEDULE</a>
+    <a href="#news">NEWS</a>
+</div>
+
+<section id="home" class="hero">
+    <div class="hero-constellation" id="constellation"></div>
+    <div class="hero-content">
+        <div class="hero-logo-mark" aria-label="ASTRA ENTERTAINMENT">
+            <span class="hero-logo-star">✦</span>
+            <span class="hero-logo-word">ASTRA</span>
+            <span class="hero-logo-subword">ENTERTAINMENT</span>
+        </div>
+        <h1 class="hero-title">MAKE YOUR MOMENT</h1>
+        <p class="hero-sub">별처럼 빛나는 아티스트와 함께, 새로운 이야기를 만들어갑니다.</p>
+        <a href="#artists" class="scroll-cue">ARTISTS 보기 ↓</a>
+    </div>
+</section>
+
+<section id="artists" class="section reveal">
+    <p class="eyebrow">OUR STARS</p>
+    <h2>ARTISTS</h2>
+    <p class="section-desc">ASTRA와 함께 무대를 채워가는 아티스트들을 소개합니다.</p>
+    <div class="artist-grid" id="artistGrid"></div>
+    <button class="add-btn admin-only" id="addArtistBtn">+ 아티스트 추가</button>
+</section>
+
+<section id="representative" class="section representative-section reveal">
+    <p class="eyebrow">LEADERSHIP</p>
+    <h2>REPRESENTATIVE</h2>
+    <p class="section-desc">ASTRA ENTERTAINMENT를 이끌며 회사의 방향과 콘텐츠 전반을 총괄합니다.</p>
+
+    <div class="representative-card">
+        <div class="representative-intro">
+            <div class="representative-avatar">Y</div>
+            <div>
+                <span class="representative-label">REPRESENTATIVE</span>
+                <h3>연우</h3>
+                <p class="representative-title">대표 · ASTRA ENTERTAINMENT</p>
+            </div>
+        </div>
+
+        <div class="representative-info">
+            <div class="rep-info-item">
+                <span>담당</span>
+                <strong>회사 운영 및 총괄</strong>
+            </div>
+            <div class="rep-info-item">
+                <span>분야</span>
+                <strong>기획 · 운영 · 콘텐츠 · 아티스트 관리</strong>
+            </div>
+        </div>
+
+        <div class="career">
+            <div class="career-heading">CAREER</div>
+            <ul>
+                <li><b>현)</b> ASTRA ENTERTAINMENT 대표</li>
+                <li><b>현)</b> 사이버 코어 매니저</li>
+                <li><b>현)</b> 사이버 코어 편집자</li>
+                <li><b>현)</b> 뤼미에르 패밀리</li>
+                <li><b>전)</b> TEMAGUMI 대표</li>
+                <li><b>전)</b> SPOON BJ</li>
+                <li><b>전)</b> 아프리카 (SOOP) BJ (동시송출)</li>
+                <li><b>전)</b> 치지직 BJ (동시송출)</li>
+                <li><b>전)</b> 유튜브 BJ (동시송출)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="schedule" class="section alt reveal">
+    <p class="eyebrow">WHAT'S NEXT</p>
+    <h2>SCHEDULE</h2>
+    <p class="section-desc">다가오는 방송과 콘텐츠, 무대 일정을 확인하세요.</p>
+    <div class="schedule-list" id="scheduleList"></div>
+    <button class="add-btn admin-only" id="addScheduleBtn">+ 일정 추가</button>
+</section>
+
+<section id="news" class="section reveal">
+    <p class="eyebrow">LATEST</p>
+    <h2>NEWS</h2>
+    <p class="section-desc">ASTRA ENTERTAINMENT의 공지와 새로운 소식입니다.</p>
+    <div class="news-list" id="newsList"></div>
+    <button class="add-btn admin-only" id="addNewsBtn">+ 소식 추가</button>
+</section>
+
+
+
+<footer class="site-footer">
+    <a class="logo-mark" href="#home" style="margin:0 auto 18px;">
+        <span class="logo-star">✦</span>
+        <span class="logo-word">ASTRA</span>
+        <span class="logo-subword">ENTERTAINMENT</span>
+    </a>
+    <p>&copy; 2026 ASTRA ENTERTAINMENT. All rights reserved.</p>
+    <button class="admin-link" id="adminEntry">관리자 모드</button>
+</footer>
+
+<div class="admin-banner" id="adminBanner">
+    <span>★ 관리자 모드가 활성화되어 있습니다</span>
+    <button id="adminExit">종료</button>
+</div>
+
+<!-- 관리자 로그인 모달 -->
+<div class="modal-overlay" id="adminModal">
+    <div class="modal">
+        <h3>관리자 로그인</h3>
+        <div class="field">
+            <label>비밀번호</label>
+            <input type="password" id="adminPwInput" placeholder="비밀번호를 입력하세요">
+        </div>
+        <p class="modal-error" id="adminError"></p>
+        <div class="modal-actions">
+            <button class="btn" id="adminCancelBtn">취소</button>
+            <button class="btn primary" id="adminSubmitBtn">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 아티스트/일정/뉴스 추가·수정 공용 모달 -->
+<div class="modal-overlay" id="formModal">
+    <div class="modal" id="formModalBody"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
