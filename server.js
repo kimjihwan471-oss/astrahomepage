@@ -1,4 +1,3 @@
-```javascript
 const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
@@ -153,4 +152,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`ASTRA server running: http://localhost:${PORT}`);
 });
-```
