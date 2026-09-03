@@ -398,7 +398,9 @@
         font-family: 'Playfair Display', serif;
         font-size: 2rem;
         box-shadow: 0 0 35px rgba(212,175,122,0.08);
+        overflow: hidden;
     }
+    .representative-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .representative-label,
     .career-heading {
@@ -461,7 +463,10 @@
         color: #0c0e1a;
         margin-bottom: 22px;
         box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        overflow: hidden;
     }
+    .artist-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
     .artist-group-tag { font-size: 0.68rem; letter-spacing: 0.14em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; display: block; }
     .artist-card h3 { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; margin-bottom: 4px; }
     .artist-role { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
@@ -776,10 +781,10 @@
     const AVATAR_COLORS = ['#d4af7a', '#9b90d6', '#7ddbde', '#e08fa0', '#8fb8de', '#c9d48f'];
 
     const DEFAULT_ARTISTS = [
-        { name: '노바 (NOVA)', group: 'STELLARIS', role: '리더 · 보컬', bio: '무대 위에서 가장 먼저 빛나는 별.', color: '#d4af7a' },
-        { name: '루나 (LUNA)', group: 'STELLARIS', role: '메인 댄서', bio: '섬세한 몸짓으로 이야기를 그린다.', color: '#8fb8de' },
-        { name: '카이 (KAI)', group: 'ORION BOYS', role: '래퍼 · 프로듀서', bio: '밤하늘의 리듬을 만드는 사람.', color: '#9b90d6' },
-        { name: '세라 (SERA)', group: 'SOLO', role: '솔로 아티스트', bio: '혼자서도 은하를 채우는 목소리.', color: '#7ddbde' }
+        { name: '노바 (NOVA)', group: 'STELLARIS', role: '리더 · 보컬', bio: '무대 위에서 가장 먼저 빛나는 별.', color: '#d4af7a', imageUrl: '' },
+        { name: '루나 (LUNA)', group: 'STELLARIS', role: '메인 댄서', bio: '섬세한 몸짓으로 이야기를 그린다.', color: '#8fb8de', imageUrl: '' },
+        { name: '카이 (KAI)', group: 'ORION BOYS', role: '래퍼 · 프로듀서', bio: '밤하늘의 리듬을 만드는 사람.', color: '#9b90d6', imageUrl: '' },
+        { name: '세라 (SERA)', group: 'SOLO', role: '솔로 아티스트', bio: '혼자서도 은하를 채우는 목소리.', color: '#7ddbde', imageUrl: '' }
     ];
     const DEFAULT_SCHEDULE = [
         { date: '2026-09-05', title: 'STELLARIS 정규 2집 컴백 쇼케이스', artist: 'STELLARIS', type: '쇼케이스' },
@@ -797,10 +802,8 @@
     let schedule = [];
     let news = [];
 
-    // Firestore에서 데이터 불러오기 (없으면 기본 데이터 자동 생성)
     async function initFirestoreData() {
         try {
-            // 아티스트
             const artistSnap = await getDocs(collection(db, "artists"));
             if (artistSnap.empty) {
                 for (let item of DEFAULT_ARTISTS) {
@@ -812,7 +815,6 @@
                 artistSnap.forEach(d => artists.push({ id: d.id, ...d.data() }));
             }
 
-            // 스케줄
             const scheduleSnap = await getDocs(collection(db, "schedule"));
             if (scheduleSnap.empty) {
                 for (let item of DEFAULT_SCHEDULE) {
@@ -824,7 +826,6 @@
                 scheduleSnap.forEach(d => schedule.push({ id: d.id, ...d.data() }));
             }
 
-            // 뉴스
             const newsSnap = await getDocs(collection(db, "news"));
             if (newsSnap.empty) {
                 for (let item of DEFAULT_NEWS) {
@@ -842,7 +843,6 @@
         }
     }
 
-    // ===================== 별빛 배경 =====================
     function buildStarfield() {
         const field = document.getElementById('starfield');
         const count = window.innerWidth < 600 ? 60 : 120;
@@ -860,7 +860,6 @@
         }
     }
 
-    // ===================== 히어로 별자리 =====================
     function buildConstellation() {
         const points = [
             [40, 70], [115, 95], [185, 115], [255, 100],
@@ -891,7 +890,6 @@
         });
     }
 
-    // ===================== 렌더링 =====================
     function formatDate(dateStr) {
         if (!dateStr) return '';
         const d = new Date(dateStr + 'T00:00:00');
@@ -901,19 +899,24 @@
 
     function renderArtists() {
         const grid = document.getElementById('artistGrid');
-        grid.innerHTML = artists.map(a => `
-            <div class="artist-card">
-                <div class="item-admin-controls">
-                    <button class="icon-btn" onclick="openArtistModal('${a.id}')" title="수정">✎</button>
-                    <button class="icon-btn danger" onclick="deleteItem('artists', '${a.id}')" title="삭제">✕</button>
+        grid.innerHTML = artists.map(a => {
+            const avatarContent = a.imageUrl 
+                ? `<img src="${a.imageUrl}" alt="${a.name}">` 
+                : a.name.charAt(0);
+            return `
+                <div class="artist-card">
+                    <div class="item-admin-controls">
+                        <button class="icon-btn" onclick="openArtistModal('${a.id}')" title="수정">✎</button>
+                        <button class="icon-btn danger" onclick="deleteItem('artists', '${a.id}')" title="삭제">✕</button>
+                    </div>
+                    <div class="artist-avatar" style="background:${a.imageUrl ? 'transparent' : (a.color || '#d4af7a')};">${avatarContent}</div>
+                    <span class="artist-group-tag">${a.group}</span>
+                    <h3>${a.name}</h3>
+                    <p class="artist-role">${a.role}</p>
+                    <p class="artist-bio">${a.bio}</p>
                 </div>
-                <div class="artist-avatar" style="background:${a.color};">${a.name.charAt(0)}</div>
-                <span class="artist-group-tag">${a.group}</span>
-                <h3>${a.name}</h3>
-                <p class="artist-role">${a.role}</p>
-                <p class="artist-bio">${a.bio}</p>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     function renderSchedule() {
@@ -964,7 +967,6 @@
 
     function renderAll() { renderArtists(); renderSchedule(); renderNews(); }
 
-    // Firestore 항목 삭제
     window.deleteItem = async function(type, id) {
         if (!confirm('정말 삭제하시겠습니까?')) return;
         try {
@@ -978,7 +980,6 @@
         }
     };
 
-    // ===================== 공용 폼 모달 =====================
     const formModal = document.getElementById('formModal');
     const formModalBody = document.getElementById('formModalBody');
 
@@ -986,14 +987,15 @@
     window.closeFormModal = closeFormModal;
 
     window.openArtistModal = function(id) {
-        const item = artists.find(a => a.id === id) || { name: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0] };
+        const item = artists.find(a => a.id === id) || { name: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0], imageUrl: '' };
         formModalBody.innerHTML = `
             <h3>${id && id !== 'null' ? '아티스트 수정' : '아티스트 추가'}</h3>
             <div class="field"><label>이름</label><input id="f-name" value="${item.name}" placeholder="예: 노바 (NOVA)"></div>
             <div class="field"><label>소속 그룹</label><input id="f-group" value="${item.group}" placeholder="예: STELLARIS"></div>
             <div class="field"><label>포지션</label><input id="f-role" value="${item.role}" placeholder="예: 리더 · 보컬"></div>
             <div class="field"><label>소개</label><textarea id="f-bio" placeholder="짧은 소개">${item.bio}</textarea></div>
-            <div class="field"><label>아바타 색상</label>
+            <div class="field"><label>프로필 이미지 주소 (URL)</label><input id="f-image" value="${item.imageUrl || ''}" placeholder="https://example.com/image.jpg"></div>
+            <div class="field"><label>아바타 배경색 (이미지가 없을 때 적용)</label>
                 <div class="color-options">
                     ${AVATAR_COLORS.map(c => `<div class="color-dot ${c === item.color ? 'selected' : ''}" style="background:${c};" data-color="${c}" onclick="selectColor(this)"></div>`).join('')}
                 </div>
@@ -1017,6 +1019,7 @@
         const group = document.getElementById('f-group').value.trim();
         const role = document.getElementById('f-role').value.trim();
         const bio = document.getElementById('f-bio').value.trim();
+        const imageUrl = document.getElementById('f-image').value.trim();
         const colorEl = formModalBody.querySelector('.color-dot.selected');
         const color = colorEl ? colorEl.dataset.color : AVATAR_COLORS[0];
         if (!name || !group || !role) { document.getElementById('f-error').textContent = '이름, 그룹, 포지션은 필수입니다.'; return; }
@@ -1024,11 +1027,11 @@
         try {
             if (id && id !== 'null') {
                 const itemRef = doc(db, "artists", id);
-                await updateDoc(itemRef, { name, group, role, bio, color });
+                await updateDoc(itemRef, { name, group, role, bio, color, imageUrl });
                 const item = artists.find(a => a.id === id);
-                Object.assign(item, { name, group, role, bio, color });
+                Object.assign(item, { name, group, role, bio, color, imageUrl });
             } else {
-                const newItem = { name, group, role, bio, color };
+                const newItem = { name, group, role, bio, color, imageUrl };
                 const docRef = await addDoc(collection(db, "artists"), newItem);
                 artists.push({ id: docRef.id, ...newItem });
             }
@@ -1130,7 +1133,6 @@
     document.getElementById('addNewsBtn').addEventListener('click', () => openNewsModal(null));
     formModal.addEventListener('click', (e) => { if (e.target === formModal) closeFormModal(); });
 
-    // ===================== 관리자 모드 =====================
     const adminModal = document.getElementById('adminModal');
     const adminPwInput = document.getElementById('adminPwInput');
     const adminError = document.getElementById('adminError');
@@ -1168,7 +1170,6 @@
     }
     document.getElementById('adminExit').addEventListener('click', () => setAdminState(false));
 
-    // ===================== 내비게이션 / 모바일 메뉴 =====================
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
@@ -1183,14 +1184,12 @@
         mobileMenu.classList.remove('open');
     }));
 
-    // ===================== 스크롤 리빌 =====================
     const revealEls = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in-view'); });
     }, { threshold: 0.12 });
     revealEls.forEach(el => io.observe(el));
 
-    // ===================== 초기화 =====================
     buildStarfield();
     buildConstellation();
     initFirestoreData();
