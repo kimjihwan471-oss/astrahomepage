@@ -565,6 +565,7 @@
         width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--line);
         color: var(--star-white); padding: 11px 13px; border-radius: 4px; font-family: inherit; font-size: 0.9rem;
     }
+    .field input[type="file"] { padding: 8px; cursor: pointer; }
     .field input:focus, .field textarea:focus, .field select:focus,
     a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     .field textarea { resize: vertical; min-height: 70px; }
@@ -801,6 +802,7 @@
     let artists = [];
     let schedule = [];
     let news = [];
+    let currentImageBase64 = '';
 
     async function initFirestoreData() {
         try {
@@ -988,14 +990,22 @@
 
     window.openArtistModal = function(id) {
         const item = artists.find(a => a.id === id) || { name: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0], imageUrl: '' };
+        currentImageBase64 = item.imageUrl || '';
         formModalBody.innerHTML = `
             <h3>${id && id !== 'null' ? '아티스트 수정' : '아티스트 추가'}</h3>
             <div class="field"><label>이름</label><input id="f-name" value="${item.name}" placeholder="예: 노바 (NOVA)"></div>
             <div class="field"><label>소속 그룹</label><input id="f-group" value="${item.group}" placeholder="예: STELLARIS"></div>
             <div class="field"><label>포지션</label><input id="f-role" value="${item.role}" placeholder="예: 리더 · 보컬"></div>
             <div class="field"><label>소개</label><textarea id="f-bio" placeholder="짧은 소개">${item.bio}</textarea></div>
-            <div class="field"><label>프로필 이미지 주소 (URL)</label><input id="f-image" value="${item.imageUrl || ''}" placeholder="https://example.com/image.jpg"></div>
-            <div class="field"><label>아바타 배경색 (이미지가 없을 때 적용)</label>
+            <div class="field"><label>프로필 사진 파일 선택</label>
+                <input type="file" id="f-image-file" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+            <div id="image-preview-wrap" style="margin-bottom:16px; ${currentImageBase64 ? '' : 'display:none;'}">
+                <label style="font-size:0.76rem; color:var(--text-muted); margin-bottom:5px; display:block;">미리보기</label>
+                <img id="image-preview" src="${currentImageBase64}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:1px solid var(--gold);">
+                <button type="button" class="btn" style="padding:4px 10px; font-size:0.75rem; margin-left:10px; vertical-align:middle;" onclick="clearImage()">사진 삭제</button>
+            </div>
+            <div class="field"><label>아바타 배경색 (사진이 없을 때 적용)</label>
                 <div class="color-options">
                     ${AVATAR_COLORS.map(c => `<div class="color-dot ${c === item.color ? 'selected' : ''}" style="background:${c};" data-color="${c}" onclick="selectColor(this)"></div>`).join('')}
                 </div>
@@ -1009,6 +1019,30 @@
         formModal.classList.add('open');
     };
 
+    window.handleImageUpload = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentImageBase64 = e.target.result;
+            const preview = document.getElementById('image-preview');
+            const wrap = document.getElementById('image-preview-wrap');
+            if (preview && wrap) {
+                preview.src = currentImageBase64;
+                wrap.style.display = 'block';
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.clearImage = function() {
+        currentImageBase64 = '';
+        const wrap = document.getElementById('image-preview-wrap');
+        const fileInput = document.getElementById('f-image-file');
+        if (wrap) wrap.style.display = 'none';
+        if (fileInput) fileInput.value = '';
+    };
+
     window.selectColor = function(el) {
         el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
         el.classList.add('selected');
@@ -1019,7 +1053,7 @@
         const group = document.getElementById('f-group').value.trim();
         const role = document.getElementById('f-role').value.trim();
         const bio = document.getElementById('f-bio').value.trim();
-        const imageUrl = document.getElementById('f-image').value.trim();
+        const imageUrl = currentImageBase64;
         const colorEl = formModalBody.querySelector('.color-dot.selected');
         const color = colorEl ? colorEl.dataset.color : AVATAR_COLORS[0];
         if (!name || !group || !role) { document.getElementById('f-error').textContent = '이름, 그룹, 포지션은 필수입니다.'; return; }
