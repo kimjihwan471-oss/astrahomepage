@@ -509,8 +509,10 @@
         padding: 2px 8px; border-radius: 999px;
         margin-left: 10px; vertical-align: middle; font-weight: 700;
     }
-    .news-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin-top 0.4s ease; color: var(--text-muted); font-size: 0.9rem; }
-    .news-item.open .news-body { max-height: 220px; margin-top: 14px; }
+    .news-body-wrap { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin-top 0.4s ease; }
+    .news-item.open .news-body-wrap { max-height: 500px; margin-top: 14px; }
+    .news-image { width: 100%; max-height: 280px; object-fit: cover; border-radius: 4px; margin-bottom: 12px; border: 1px solid var(--line); }
+    .news-body { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
     .news-toggle-cue { font-size: 0.72rem; color: var(--text-dim); margin-top: 10px; }
 
     /* ===== 관리자 전용 컨트롤 ===== */
@@ -801,9 +803,9 @@
         { date: '2026-10-02', title: 'ASTRA 신인 아티스트 쇼케이스', artist: 'ASTRA', type: '행사' }
     ];
     const DEFAULT_NEWS = [
-        { date: '2026-08-25', title: 'ASTRA ENTERTAINMENT, 신인 개발 프로젝트 공식 발표', content: 'ASTRA ENTERTAINMENT가 차세대 아티스트 발굴을 위한 신인 개발 프로젝트를 새롭게 시작합니다. 오디션 일정은 추후 공식 채널을 통해 안내됩니다.' },
-        { date: '2026-08-10', title: 'STELLARIS, 첫 번째 월드투어 확정', content: 'STELLARIS의 첫 월드투어가 2026년 하반기 아시아 지역을 시작으로 확정되었습니다. 자세한 일정은 SCHEDULE 페이지에서 확인하실 수 있습니다.' },
-        { date: '2026-07-28', title: 'ORION BOYS 신곡 뮤직비디오 공개', content: 'ORION BOYS의 새로운 싱글과 뮤직비디오가 공개되었습니다. 많은 관심과 사랑 부탁드립니다.' }
+        { date: '2026-08-25', title: 'ASTRA ENTERTAINMENT, 신인 개발 프로젝트 공식 발표', content: 'ASTRA ENTERTAINMENT가 차세대 아티스트 발굴을 위한 신인 개발 프로젝트를 새롭게 시작합니다. 오디션 일정은 추후 공식 채널을 통해 안내됩니다.', imageUrl: '' },
+        { date: '2026-08-10', title: 'STELLARIS, 첫 번째 월드투어 확정', content: 'STELLARIS의 첫 월드투어가 2026년 하반기 아시아 지역을 시작으로 확정되었습니다. 자세한 일정은 SCHEDULE 페이지에서 확인하실 수 있습니다.', imageUrl: '' },
+        { date: '2026-07-28', title: 'ORION BOYS 신곡 뮤직비디오 공개', content: 'ORION BOYS의 새로운 싱글과 뮤직비디오가 공개되었습니다. 많은 관심과 사랑 부탁드립니다.', imageUrl: '' }
     ];
 
     let artists = [];
@@ -963,7 +965,10 @@
                         <button class="icon-btn danger" onclick="deleteItem('news', '${n.id}')" title="삭제">✕</button>
                     </div>
                 </div>
-                <div class="news-body">${n.content}</div>
+                <div class="news-body-wrap">
+                    ${n.imageUrl ? `<img src="${n.imageUrl}" class="news-image" alt="뉴스 이미지">` : ''}
+                    <div class="news-body">${n.content}</div>
+                </div>
                 <div class="news-toggle-cue" onclick="toggleNews('${n.id}')" style="cursor:pointer;">더 보기 ▾</div>
             </div>
         `).join('');
@@ -1089,15 +1094,17 @@
         const item = schedule.find(s => s.id === id) || { date: '', title: '', artist: '', type: '쇼케이스' };
         formModalBody.innerHTML = `
             <h3>${id && id !== 'null' ? '일정 수정' : '일정 추가'}</h3>
-            <div class="field"><label>날짜</label><input type="date" id="f-date" value="${item.date}"></div>
-            <div class="field"><label>제목</label><input id="f-title" value="${item.title}" placeholder="예: STELLARIS 컴백 쇼케이스"></div>
-            <div class="field"><label>아티스트 / 팀</label><input id="f-artist" value="${item.artist}" placeholder="예: STELLARIS"></div>
-            <div class="field"><label>유형</label>
-                <select id="f-type">
-                    ${['쇼케이스','팬미팅','콘서트','방송','행사','기타'].map(t => `<option ${t === item.type ? 'selected' : ''}>${t}</option>`).join('')}
-                </select>
+            <div class="modal-scroll-content">
+                <div class="field"><label>날짜</label><input type="date" id="f-date" value="${item.date}"></div>
+                <div class="field"><label>제목</label><input id="f-title" value="${item.title}" placeholder="예: STELLARIS 컴백 쇼케이스"></div>
+                <div class="field"><label>아티스트 / 팀</label><input id="f-artist" value="${item.artist}" placeholder="예: STELLARIS"></div>
+                <div class="field"><label>유형</label>
+                    <select id="f-type">
+                        ${['쇼케이스','팬미팅','콘서트','방송','행사','기타'].map(t => `<option ${t === item.type ? 'selected' : ''}>${t}</option>`).join('')}
+                    </select>
+                </div>
+                <p class="modal-error" id="f-error"></p>
             </div>
-            <p class="modal-error" id="f-error"></p>
             <div class="modal-actions">
                 <button class="btn" onclick="closeFormModal()">취소</button>
                 <button class="btn primary" onclick="submitSchedule('${id}')">저장</button>
@@ -1132,13 +1139,24 @@
     };
 
     window.openNewsModal = function(id) {
-        const item = news.find(n => n.id === id) || { date: '', title: '', content: '' };
+        const item = news.find(n => n.id === id) || { date: '', title: '', content: '', imageUrl: '' };
+        currentImageBase64 = item.imageUrl || '';
         formModalBody.innerHTML = `
             <h3>${id && id !== 'null' ? '소식 수정' : '소식 추가'}</h3>
-            <div class="field"><label>날짜</label><input type="date" id="f-date" value="${item.date}"></div>
-            <div class="field"><label>제목</label><input id="f-title" value="${item.title}" placeholder="공지 제목"></div>
-            <div class="field"><label>내용</label><textarea id="f-content" placeholder="공지 내용">${item.content}</textarea></div>
-            <p class="modal-error" id="f-error"></p>
+            <div class="modal-scroll-content">
+                <div class="field"><label>날짜</label><input type="date" id="f-date" value="${item.date}"></div>
+                <div class="field"><label>제목</label><input id="f-title" value="${item.title}" placeholder="공지 제목"></div>
+                <div class="field"><label>내용</label><textarea id="f-content" placeholder="공지 내용">${item.content}</textarea></div>
+                <div class="field"><label>첨부 이미지 파일 선택</label>
+                    <input type="file" id="f-image-file" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+                <div id="image-preview-wrap" style="margin-bottom:16px; ${currentImageBase64 ? '' : 'display:none;'}">
+                    <label style="font-size:0.76rem; color:var(--text-muted); margin-bottom:5px; display:block;">미리보기</label>
+                    <img id="image-preview" src="${currentImageBase64}" style="width:100px; height:60px; object-fit:cover; border-radius:4px; border:1px solid var(--gold);">
+                    <button type="button" class="btn" style="padding:4px 10px; font-size:0.75rem; margin-left:10px; vertical-align:middle;" onclick="clearImage()">사진 삭제</button>
+                </div>
+                <p class="modal-error" id="f-error"></p>
+            </div>
             <div class="modal-actions">
                 <button class="btn" onclick="closeFormModal()">취소</button>
                 <button class="btn primary" onclick="submitNews('${id}')">저장</button>
@@ -1151,16 +1169,17 @@
         const date = document.getElementById('f-date').value;
         const title = document.getElementById('f-title').value.trim();
         const content = document.getElementById('f-content').value.trim();
+        const imageUrl = currentImageBase64;
         if (!date || !title) { document.getElementById('f-error').textContent = '날짜와 제목은 필수입니다.'; return; }
 
         try {
             if (id && id !== 'null') {
                 const itemRef = doc(db, "news", id);
-                await updateDoc(itemRef, { date, title, content });
+                await updateDoc(itemRef, { date, title, content, imageUrl });
                 const item = news.find(n => n.id === id);
-                Object.assign(item, { date, title, content });
+                Object.assign(item, { date, title, content, imageUrl });
             } else {
-                const newItem = { date, title, content };
+                const newItem = { date, title, content, imageUrl };
                 const docRef = await addDoc(collection(db, "news"), newItem);
                 news.push({ id: docRef.id, ...newItem });
             }
