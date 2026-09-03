@@ -468,7 +468,21 @@
     .artist-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .artist-group-tag { font-size: 0.68rem; letter-spacing: 0.14em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; display: block; }
-    .artist-card h3 { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; margin-bottom: 4px; }
+    
+    .artist-header-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 4px;
+    }
+    .artist-card h3 { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; }
+    .artist-handle {
+        font-size: 0.78rem;
+        color: var(--lavender);
+        letter-spacing: 0.04em;
+    }
+
     .artist-role { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
     .artist-bio { font-size: 0.86rem; color: var(--text-dim); line-height: 1.55; }
 
@@ -791,10 +805,10 @@
     const AVATAR_COLORS = ['#d4af7a', '#9b90d6', '#7ddbde', '#e08fa0', '#8fb8de', '#c9d48f'];
 
     const DEFAULT_ARTISTS = [
-        { name: '노바 (NOVA)', group: 'STELLARIS', role: '리더 · 보컬', bio: '무대 위에서 가장 먼저 빛나는 별.', color: '#d4af7a', imageUrl: '' },
-        { name: '루나 (LUNA)', group: 'STELLARIS', role: '메인 댄서', bio: '섬세한 몸짓으로 이야기를 그린다.', color: '#8fb8de', imageUrl: '' },
-        { name: '카이 (KAI)', group: 'ORION BOYS', role: '래퍼 · 프로듀서', bio: '밤하늘의 리듬을 만드는 사람.', color: '#9b90d6', imageUrl: '' },
-        { name: '세라 (SERA)', group: 'SOLO', role: '솔로 아티스트', bio: '혼자서도 은하를 채우는 목소리.', color: '#7ddbde', imageUrl: '' }
+        { name: '노바 (NOVA)', handle: '@nova_astra', group: 'STELLARIS', role: '리더 · 보컬', bio: '무대 위에서 가장 먼저 빛나는 별.', color: '#d4af7a', imageUrl: '' },
+        { name: '루나 (LUNA)', handle: '@luna_stellar', group: 'STELLARIS', role: '메인 댄서', bio: '섬세한 몸짓으로 이야기를 그린다.', color: '#8fb8de', imageUrl: '' },
+        { name: '카이 (KAI)', handle: '@kai_orion', group: 'ORION BOYS', role: '래퍼 · 프로듀서', bio: '밤하늘의 리듬을 만드는 사람.', color: '#9b90d6', imageUrl: '' },
+        { name: '세라 (SERA)', handle: '@sera_solo', group: 'SOLO', role: '솔로 아티스트', bio: '혼자서도 은하를 채우는 목소리.', color: '#7ddbde', imageUrl: '' }
     ];
     const DEFAULT_SCHEDULE = [
         { date: '2026-09-05', title: 'STELLARIS 정규 2집 컴백 쇼케이스', artist: 'STELLARIS', type: '쇼케이스' },
@@ -922,7 +936,10 @@
                     </div>
                     <div class="artist-avatar" style="background:${a.imageUrl ? 'transparent' : (a.color || '#d4af7a')};">${avatarContent}</div>
                     <span class="artist-group-tag">${a.group}</span>
-                    <h3>${a.name}</h3>
+                    <div class="artist-header-row">
+                        <h3>${a.name}</h3>
+                        ${a.handle ? `<span class="artist-handle">${a.handle}</span>` : ''}
+                    </div>
                     <p class="artist-role">${a.role}</p>
                     <p class="artist-bio">${a.bio}</p>
                 </div>
@@ -1001,12 +1018,13 @@
     window.closeFormModal = closeFormModal;
 
     window.openArtistModal = function(id) {
-        const item = artists.find(a => a.id === id) || { name: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0], imageUrl: '' };
+        const item = artists.find(a => a.id === id) || { name: '', handle: '', group: '', role: '', bio: '', color: AVATAR_COLORS[0], imageUrl: '' };
         currentImageBase64 = item.imageUrl || '';
         formModalBody.innerHTML = `
             <h3>${id && id !== 'null' ? '아티스트 수정' : '아티스트 추가'}</h3>
             <div class="modal-scroll-content">
                 <div class="field"><label>이름</label><input id="f-name" value="${item.name}" placeholder="예: 노바 (NOVA)"></div>
+                <div class="field"><label>아이디 / 계정 (예: @handle)</label><input id="f-handle" value="${item.handle || ''}" placeholder="예: @nova_astra"></div>
                 <div class="field"><label>소속 그룹</label><input id="f-group" value="${item.group}" placeholder="예: STELLARIS"></div>
                 <div class="field"><label>포지션</label><input id="f-role" value="${item.role}" placeholder="예: 리더 · 보컬"></div>
                 <div class="field"><label>소개</label><textarea id="f-bio" placeholder="짧은 소개">${item.bio}</textarea></div>
@@ -1064,6 +1082,7 @@
 
     window.submitArtist = async function(id) {
         const name = document.getElementById('f-name').value.trim();
+        const handle = document.getElementById('f-handle').value.trim();
         const group = document.getElementById('f-group').value.trim();
         const role = document.getElementById('f-role').value.trim();
         const bio = document.getElementById('f-bio').value.trim();
@@ -1075,11 +1094,11 @@
         try {
             if (id && id !== 'null') {
                 const itemRef = doc(db, "artists", id);
-                await updateDoc(itemRef, { name, group, role, bio, color, imageUrl });
+                await updateDoc(itemRef, { name, handle, group, role, bio, color, imageUrl });
                 const item = artists.find(a => a.id === id);
-                Object.assign(item, { name, group, role, bio, color, imageUrl });
+                Object.assign(item, { name, handle, group, role, bio, color, imageUrl });
             } else {
-                const newItem = { name, group, role, bio, color, imageUrl };
+                const newItem = { name, handle, group, role, bio, color, imageUrl };
                 const docRef = await addDoc(collection(db, "artists"), newItem);
                 artists.push({ id: docRef.id, ...newItem });
             }
